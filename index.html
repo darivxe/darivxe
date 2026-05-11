@@ -338,7 +338,18 @@ nav{display:flex;align-items:center;gap:1.8rem}
 .writeup-row:hover{background:var(--surface)}
 .wu-idx{font-size:12px;color:var(--text-mute)}
 .wu-type-wrap{display:flex;align-items:center;gap:.5rem}
-.wu-type{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+.wu-type{
+  font-size:11px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:#c98ad6;
+}
+.wu-type.jeopardy{
+  color:#3B7597;
+}
+.wu-type.hiring{
+  color: #FFE97D;
+}
 .wu-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(16px,2vw,22px);transition:color .2s}
 .writeup-row:hover .wu-title{color:var(--accent)}
 .wu-date{font-size:12px;color:var(--text-dim)}
@@ -1137,18 +1148,18 @@ footer::before{
       <a href="./bcctf/" class="writeup-row">
         <span class="wu-idx">01</span>
         <div class="wu-type-wrap">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c6ff3d" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
-          <span class="wu-type">Jeopardy</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3B7597" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+          <span class="wu-type jeopardy">JEOPARDY</span>
         </div>
-        <span class="wu-title">Bearcat CTF</span>
+        <div class="wu-title">Bearcat CTF</div>
         <span class="wu-date">21 Feb 2026</span>
         <span class="wu-read">10 min <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></span>
       </a>
       <a href="./cctf/" class="writeup-row">
         <span class="wu-idx">02</span>
         <div class="wu-type-wrap">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#bc73b3" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
-          <span class="wu-type">Hiring CTF</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFE97D" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+          <span class="wu-type hiring">Hiring CTF</span>
         </div>
         <span class="wu-title">CloudSEK CTF</span>
         <span class="wu-date">2 May 2026</span>
