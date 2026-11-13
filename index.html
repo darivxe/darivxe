@@ -699,6 +699,7 @@ footer::before{
             <li class="focus-item"><span class="focus-arrow">&rarr;</span><span>OSINT</span></li>
             <li class="focus-item"><span class="focus-arrow">&rarr;</span><span>Web Exploitation</span></li>
             <li class="focus-item"><span class="focus-arrow">&rarr;</span><span>Deep Web Rabbithole Dweller</span></li>
+            <li class="focus-item" style="margin-top:.5rem;padding-top:.75rem;border-top:1px solid var(--line)"><span class="focus-arrow" style="color:var(--accent-dim)">&rarr;</span><span style="color:var(--text-mute);font-size:12px">building: Argus, pkg-provenance</span></li>
           </ul>
         </div>
       </div>
@@ -1024,6 +1025,33 @@ footer::before{
             <div>
               <div class="win-icon-wrap">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+              </div>
+              <div class="win-badge">7 VULNS · CERT-IN</div>
+            </div>
+            <span class="win-num">04</span>
+          </div>
+          <div class="win-title">7 Vulnerabilities — NTA/NITTT Portal</div>
+          <div class="win-venue">@ CERT-In · Independent Black-Box Research</div>
+          <div class="win-desc">Independently identified 7 security vulnerabilities across the NITTT portal through unauthenticated black-box reconnaissance and manual API analysis — including a critical CORS misconfiguration and an externally hosted application silently referenced in the production JavaScript bundle.</div>
+        </div>
+        <div class="win-tags">
+          <span class="win-tag">Vulnerability Research</span>
+          <span class="win-tag">API</span>
+          <span class="win-tag">Black-Box</span>
+        </div>
+      </div>
+
+      <!-- 05 -->
+      <div class="win-card">
+        <div>
+          <div class="win-card-top">
+            <div>
+              <div class="win-icon-wrap">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                   <polyline points="14 2 14 8 20 8"/>
                   <line x1="16" y1="13" x2="8" y2="13"/>
@@ -1033,7 +1061,7 @@ footer::before{
               </div>
               <div class="win-badge">60+ PAGES</div>
             </div>
-            <span class="win-num">04</span>
+            <span class="win-num">05</span>
           </div>
           <div class="win-title">Spyware Market Research — OSINT Investigation</div>
           <div class="win-venue">@ Independent / Develliance</div>
@@ -1089,7 +1117,7 @@ footer::before{
 
             <div class="exp-top">
               <h3 class="exp-role">Penetration Testing Intern</h3>
-              <span class="exp-period">Sep 2026 — Present</span>
+              <span class="exp-period">Jun 2026 — Sep 2026</span>
             </div>
 
             <div class="exp-meta">
@@ -1237,11 +1265,11 @@ footer::before{
               </div>
 
               <div class="cert-name">
-                MOIS — Certified OSINT Expert
+                MCSI OSINT Practitioner
               </div>
 
               <div class="cert-meta">
-                My OSINT Training · 2025
+                Mossé Cyber Security Institute · Dec 2025
               </div>
 
             </div>
@@ -1378,13 +1406,64 @@ footer::before{
         </div>
         <h2 class="headline" style="font-size:clamp(36px,7vw,88px)">field reports.</h2>
       </div>
-      <div class="projects-count"><span class="accent">2</span> records <span style="color:var(--line-2);margin:0 .5rem">/</span> sorted: recent</div>
+      <div class="projects-count"><span class="accent">5</span> records <span style="color:var(--line-2);margin:0 .5rem">/</span> sorted: recent</div>
     </div>
     <div class="projects-list">
-      <a href="./projects/Spyware-Market.pdf" target="_blank" rel="noreferrer" class="project-item">
+      <!-- ARGUS -->
+      <div class="project-item" style="cursor:default">
         <span class="project-accent-bar"></span>
         <div class="project-inner">
           <div><span class="project-idx">01</span></div>
+          <div>
+            <div class="project-kind-row">
+              <span class="project-kind">Offensive Security Tool</span>
+              <span class="project-ysep"></span>
+              <span class="project-yr">2026 — building</span>
+            </div>
+            <h3 class="project-title">Argus</h3>
+            <p class="project-summary">A local-first offensive security workstation combining a real PTY terminal, AI-assisted research agents, and persistent investigation management — purpose-built to accelerate real pentest workflows. Built around investigation-centric findings, assets, timelines, and Markdown reporting.</p>
+          </div>
+          <div>
+            <div class="project-tags">
+              <span class="project-tag">Python</span>
+              <span class="project-tag">FastAPI</span>
+              <span class="project-tag">React</span>
+              <span class="project-tag">AI-Assisted</span>
+            </div>
+            <div class="project-cta" style="color:var(--accent)">in progress<span class="blink accent" style="margin-left:.4rem">_</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PKG PROVENANCE -->
+      <div class="project-item" style="cursor:default">
+        <span class="project-accent-bar"></span>
+        <div class="project-inner">
+          <div><span class="project-idx">02</span></div>
+          <div>
+            <div class="project-kind-row">
+              <span class="project-kind">Supply Chain Security</span>
+              <span class="project-ysep"></span>
+              <span class="project-yr">2026 — building</span>
+            </div>
+            <h3 class="project-title">Publisher Identity &amp; Provenance Verification</h3>
+            <p class="project-summary">Existing supply chain tools ask "is the code malicious?" — this asks "is it really the legitimate maintainer?" Flags compromised or fabricated publisher identities by analyzing account age, GitHub history, cross-platform consistency, and publishing patterns. Package maintainers can establish a trusted publisher baseline; future releases are checked against it, catching account takeovers even when stolen credentials are valid.</p>
+          </div>
+          <div>
+            <div class="project-tags">
+              <span class="project-tag">Supply Chain</span>
+              <span class="project-tag">npm</span>
+              <span class="project-tag">Identity Verification</span>
+            </div>
+            <div class="project-cta" style="color:var(--accent)">in progress<span class="blink accent" style="margin-left:.4rem">_</span></div>
+          </div>
+        </div>
+      </div>
+
+      <a href="./projects/Spyware-Market.pdf" target="_blank" rel="noreferrer" class="project-item">
+        <span class="project-accent-bar"></span>
+        <div class="project-inner">
+          <div><span class="project-idx">03</span></div>
           <div>
             <div class="project-kind-row">
               <span class="project-kind">Threat Intelligence</span>
@@ -1407,7 +1486,7 @@ footer::before{
       <a href="./projects/CloudFlare-Footprint.pdf" target="_blank" rel="noreferrer" class="project-item">
         <span class="project-accent-bar"></span>
         <div class="project-inner">
-          <div><span class="project-idx">02</span></div>
+          <div><span class="project-idx">04</span></div>
           <div>
             <div class="project-kind-row">
               <span class="project-kind">Technology Footprint</span>
@@ -1430,7 +1509,7 @@ footer::before{
       <a href="./projects/[OSINT]Discover-Whistleblowers.pdf" target="_blank" rel="noreferrer" class="project-item">
   <span class="project-accent-bar"></span>
   <div class="project-inner">
-    <div><span class="project-idx">03</span></div>
+    <div><span class="project-idx">05</span></div>
 
     <div>
       <div class="project-kind-row">
